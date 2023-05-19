@@ -12,6 +12,7 @@ const ChatModule: React.FC = ({handleSend, setData, data}) => {
   const [text, setText] = useState();
 
   const renderItem = ({item}) => (
+    item?.role != 'system' &&
     <View
       style={[
         {

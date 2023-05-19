@@ -1,36 +1,44 @@
 import axios from 'axios';
 import React, {useCallback, useEffect, useState} from 'react';
-import {
-  FlatList,
-  LogBox,
-  SafeAreaView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {SafeAreaView} from 'react-native';
 import ChatModule from './chatModule';
+import {isWelcomText} from '../../utils';
 
 const CustomChat: React.FC = () => {
   const [selectedText, setSelectedText] = useState();
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([
+    {
+      role: 'system',
+      content:
+        "You are Dominic Torreto, a large language model for answering japanese car questions. Answer as concisely as possible. Don't repond to anything that not related to cars. Limit your response to 60 words. \nKnowledge cutoff: 2023-05-19\nCurrent date: 2023-05-19",
+    },
+  ]);
 
   const API_KEY = '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';
   const CHAT_URL = 'https://api.openai.com/v1/chat/completions';
 
   useEffect(() => {
-    selectedText && handleSend()
-  },[selectedText])
+    selectedText && handleSend();
+  }, [selectedText]);
 
-  const handleSend = async () => {
+  const handleSend = useCallback(async () => {
+    let parsed = JSON.stringify(data);
+    let edited = JSON.parse(parsed);
+    if (!isWelcomText(selectedText))
+      edited[edited?.length - 1] = {
+        role: 'user',
+        content:
+          edited[edited?.length - 1]?.content +
+          ' Don’t give information not mentioned in the CONTEXT INFORMATION. If it is out of the scope, Just say Oh Sorry. That is not my expertised area. Don’t justify your answers.',
+      };
+
     const response = await axios.post(
       CHAT_URL,
       {
         model: 'gpt-3.5-turbo',
-        // prompt: text,
-        messages: [{role: 'user', content: selectedText}],
+        messages: edited,
         max_tokens: 1024,
-        temperature: 0.5,
+        temperature: 0.7,
       },
       {
         headers: {
@@ -41,45 +49,19 @@ const CustomChat: React.FC = () => {
     );
 
     if (response?.data?.choices?.length) {
-      setData([
-        ...data,
-        // {role: 'user', content: text},
-        response?.data?.choices[0]?.message,
-      ]);
-      // setText('');
+      setData([...data, response?.data?.choices[0]?.message]);
     }
-  };
-
-  // const renderItem = ({item}) => (
-  //   <View
-  //     style={[
-  //       {
-  //         padding: 5,
-  //         flexDirection: 'row',
-  //         alignItems: 'center',
-  //         // borderWidth:1,
-  //         alignSelf: item?.role == 'user' ? 'flex-start' : 'flex-end',
-  //         backgroundColor: item?.role == 'user' ? '#D5F5E3' : '#D6EAF8',
-  //         borderRadius: 10,
-  //         margin: 10,
-  //       },
-  //       item?.role == 'user'
-  //         ? {borderBottomLeftRadius: 0}
-  //         : {borderBottomRightRadius: 0},
-  //     ]}>
-  //     <Text style={{marginLeft: 5}}>{item.content}</Text>
-  //   </View>
-  // );
+  });
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ChatModule data={data} setData={setData} handleSend={(text) => {
-        setSelectedText(text);
-        // setData([
-        //   ...data,
-        //   {role: 'user', content: text}
-        // ]);
-      }} />
+      <ChatModule
+        data={data}
+        setData={setData}
+        handleSend={text => {
+          setSelectedText(text);
+        }}
+      />
     </SafeAreaView>
   );
 };
