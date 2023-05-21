@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
-  SafeAreaView
+  SafeAreaView, StatusBar, View
 } from 'react-native';
 import {GiftedChat} from 'react-native-gifted-chat';
 
@@ -16,13 +16,13 @@ const GiftedChaatComp: React.FC = () => {
     setMessages([
       {
         _id: 1,
-        text: 'Ask anthing...',
+        text: 'Ask me anything ...',
         createdAt: new Date(),
         user: {
           _id: 2,
           name: 'assistant',
           avatar:
-            'https://banner2.cleanpng.com/20190224/qal/kisspng-chatbot-clip-art-computer-icons-internet-bot-openc-clipart-bot-5c72479d22fb55.3012787315509933091433.jpg',
+            'https://i.ytimg.com/vi/_WltEuofPK4/maxresdefault.jpg',
         },
       },
     ]);
@@ -70,7 +70,7 @@ const GiftedChaatComp: React.FC = () => {
             _id: 2,
             name: 'assistant',
             avatar:
-              'https://banner2.cleanpng.com/20190224/qal/kisspng-chatbot-clip-art-computer-icons-internet-bot-openc-clipart-bot-5c72479d22fb55.3012787315509933091433.jpg',
+              'https://i.ytimg.com/vi/_WltEuofPK4/maxresdefault.jpg',
           },
         },
         ...messages,
@@ -79,7 +79,10 @@ const GiftedChaatComp: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <View style={{flex: 1}}>
+      {/* <View style={{backgroundColor:'red',height:50}} ></View>
+       */}
+       <StatusBar translucent backgroundColor="#4287f5" barStyle="light-content"  />
       <GiftedChat
         messages={messages}
         onSend={message => {
@@ -90,6 +93,8 @@ const GiftedChaatComp: React.FC = () => {
               createdAt: new Date(),
               user: {
                 _id: 1,
+                // name:'user',
+                avatar: 'https://i.ytimg.com/vi/_WltEuofPK4/maxresdefault.jpg'
               },
             },
             ...messages,
@@ -100,7 +105,7 @@ const GiftedChaatComp: React.FC = () => {
           _id: 1,
         }}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 

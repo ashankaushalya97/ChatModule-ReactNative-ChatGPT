@@ -21,8 +21,8 @@ const App: React.FC = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      {/* <GiftedChaatComp/> */}
-      <CustomChat />
+      <GiftedChaatComp/>
+      {/* <CustomChat /> */}
     </SafeAreaView>
   );
 };
